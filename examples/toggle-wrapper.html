@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<script src="../dist/json-tags.min.js"></script>
+<script>
+var cssText = `
+:host {
+  display: inline-block;
+  position: relative;
+  vertical-align: middle;
+}
+.facade {
+  color: var(--color, white);
+  background: var(--background, rgb(57,75,88));
+
+  font-size: 1em;
+  height: 1.95em;
+  width: 3.3em;
+
+  display: flex;
+  align-items: center;
+
+  user-select: none;
+  transition: background-color 0.2s;
+  position: relative;
+  box-sizing: border-box;
+
+  border-radius: var(--border-radius, 0.5em);
+  border: var(--border-width, 0.2em) solid transparent;
+}
+.facade.checked {
+  background: var(--checked-background, rgb(0,172,24));
+}
+.handle {
+  background: var(--color, white);
+  transition: transform 0.2s ease-out;
+  transform: translate3d(0, 0, 0);
+  height: 100%;
+  width: 50%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
+  border-radius: calc(var(--border-radius, 0.5em) - var(--border-width, 0.2em));
+}
+.checked .handle {
+  transform: translate3d(100%, 0, 0);
+}
+::slotted(input) {
+  position: absolute;
+  opacity: 0.0001;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+svg {
+  width: 50%;
+  padding: 0.25em;
+}
+path {
+  fill: currentColor;
+}
+`
+
+createComponent({
+  tagName: 'toggle-wrapper',
+
+  props: {
+    checked: Boolean
+  },
+
+  connectedCallback () {
+    var input = this.querySelector('input[type=checkbox]')
+    if (input) this.checked = input.checked
+  },
+
+  didChange (event) {
+    if (event.target.type === 'checkbox') {
+      this.checked = event.target.checked
+    }
+  },
+
+  render ({ checked }) {
+    return [
+      [ 'style', cssText ],
+      [ 'span', { class: 'facade' + (checked ? ' checked' : '') },
+        [ 'svg', { viewBox: '0 0 1920 1920', 'aria-hidden': 'true', role: 'presentation' },
+          [ 'path', { d: 'M799.967 1680c-42.24 0-83.039-16.72-113.118-46.88l-479.99-479.993c-62.479-62.48-62.479-163.758 0-226.237 62.479-62.48 163.757-62.48 226.235 0l346.473 346.395 690.146-966.227c51.359-72 151.437-88.56 223.195-37.28 71.999 51.44 88.638 151.358 37.28 223.197L930.203 1612.961c-27.36 38.32-70.159 62.56-117.038 66.479-4.48.4-8.8.56-13.2.56' } ]
+        ],
+        [ 'svg', { viewBox: '0 0 1920 1920', 'aria-hidden': 'true', role: 'presentation' },
+          [ 'path', { d: 'M1716.48 433.12l-226.32-226.24-526.8 526.88-526.88-526.88-226.32 226.24L737.04 960l-526.88 526.88 226.32 226.24 526.88-526.88 526.8 526.88 226.32-226.24L1189.6 960z' } ]
+        ],
+        [ 'span', { class: 'handle' } ]
+      ],
+      [ 'slot', { onchange: this.didChange.bind(this) } ]
+    ]
+  }
+})
+
+</script>
+<toggle-wrapper>
+  <input type="checkbox" />
+</toggle-wrapper>
